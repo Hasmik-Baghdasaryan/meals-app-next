@@ -5,9 +5,9 @@ import { paginate } from "@/app/_helpers/pagination";
 import { GridSkeleton, SearchSkeleton } from "@/app/_components/shared/Loading";
 
 import Message from "@/app/_components/shared/Message";
-import Search from "@/app/_components/shared/Search";
 import Pagination from "@/app/_components/shared/Pagination";
 import CardGrid from "../_components/shared/CardGrid";
+import LiveFilter from "../_components/search/LiveFilter";
 
 type IngredientsPageProps = {
   searchParams: Promise<{ page?: string; query?: string }>;
@@ -32,7 +32,7 @@ export default function IngredientsPage({
         </p>
       </div>
       <Suspense fallback={<SearchSkeleton />}>
-        <Search placeholder="Search ingredients..." />
+        <LiveFilter />
       </Suspense>
       <Suspense fallback={<GridSkeleton />}>
         <PageContent searchParams={searchParams} />

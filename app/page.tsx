@@ -4,7 +4,7 @@ import {
   SearchSkeleton,
 } from "@/app/_components/shared/Loading";
 import RandomMeal from "@/app/_components/randomMeal/RandomMeal";
-import Search from "@/app/_components/shared/Search";
+import SearchForm from "./_components/search/SearchForm";
 
 export default function Home() {
   return (
@@ -18,7 +18,7 @@ export default function Home() {
         </p>
       </div>
       <Suspense fallback={<SearchSkeleton />}>
-        <Search target="/search" />
+        <SearchForm target="/search" />
       </Suspense>
 
       <Suspense fallback={<RecipeSkeleton />}>

@@ -50,7 +50,7 @@ async function PageContent({ searchParams, params }: IngredientPageProps) {
   const meals = await getMealByIngredient(ingredient.name);
 
   return (
-    <>
+    <section className="my-6">
       <h1 className="mb-6 text-3xl font-bold text-neutral-900">
         {ingredient.name}
       </h1>
@@ -65,6 +65,6 @@ async function PageContent({ searchParams, params }: IngredientPageProps) {
           />
         </Suspense>
       )}
-    </>
+    </section>
   );
 }
