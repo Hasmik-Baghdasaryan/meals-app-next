@@ -2,15 +2,12 @@ import { Suspense } from "react";
 
 import { getIngredients } from "@/app/_lib/ingredients";
 import { paginate } from "@/app/_helpers/pagination";
-import { SearchSkeleton } from "@/app/_components/shared/Loading";
+import { GridSkeleton, SearchSkeleton } from "@/app/_components/shared/Loading";
 
-import Card from "@/app/_components/shared/Card";
 import Message from "@/app/_components/shared/Message";
 import Search from "@/app/_components/shared/Search";
 import Pagination from "@/app/_components/shared/Pagination";
-import CardLink from "@/app/_components/shared/CardLink";
-import { GridSkeleton } from "@/app/_components/shared/Loading";
-import { GRID_CLASSES } from "../styles";
+import CardGrid from "../_components/shared/CardGrid";
 
 type IngredientsPageProps = {
   searchParams: Promise<{ page?: string; query?: string }>;
@@ -24,7 +21,7 @@ export default function IngredientsPage({
   searchParams,
 }: IngredientsPageProps) {
   return (
-    <>
+    <section className="my-8">
       <div className="mb-8 text-center">
         <h1 className="text-[clamp(30px,4.5vw,46px)] leading-[1.1] font-bold text-balance text-neutral-900">
           What&apos;s in your <span className="text-primary-500">fridge?</span>
@@ -40,7 +37,7 @@ export default function IngredientsPage({
       <Suspense fallback={<GridSkeleton />}>
         <PageContent searchParams={searchParams} />
       </Suspense>
-    </>
+    </section>
   );
 }
 
@@ -67,17 +64,15 @@ async function PageContent({ searchParams }: IngredientsPageProps) {
 
   return (
     <>
-      <ul className={`${GRID_CLASSES} my-6`}>
-        {items.map((ingr) => (
-          <li key={ingr.id}>
-            <CardLink
-              path={`/ingredients/${encodeURIComponent(ingr.name.toLocaleLowerCase())}`}
-            >
-              <Card src={ingr.thumb} title={ingr.name} />
-            </CardLink>
-          </li>
-        ))}
-      </ul>
+      <CardGrid
+        className="my-6"
+        items={items.map((i) => ({
+          id: i.id,
+          href: `/ingredients/${encodeURIComponent(i.name)}`,
+          title: i.name,
+          src: i.thumb,
+        }))}
+      />
       <Pagination
         totalPages={totalPages}
         currentPage={currentPage}

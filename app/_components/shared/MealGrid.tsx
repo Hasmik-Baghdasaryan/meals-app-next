@@ -1,9 +1,6 @@
 import { MealBasics } from "@/app/_types/meals";
 import { mealImageUrl } from "@/app/_helpers/image";
-
-import Card from "@/app/_components/shared/Card";
-import CardLink from "./CardLink";
-import { GRID_CLASSES } from "@/app/styles";
+import CardGrid from "./CardGrid";
 
 type MealGridProps = {
   meals: MealBasics[];
@@ -11,19 +8,15 @@ type MealGridProps = {
 
 export default function MealGrid({ meals }: MealGridProps) {
   return (
-    <ul className={GRID_CLASSES}>
-      {meals.map((meal) => (
-        <li key={meal.id}>
-          <CardLink path={`/recipes/${meal.id}`}>
-            <Card
-              src={mealImageUrl(meal.thumb, "medium")}
-              title={meal.name}
-              description={meal.area}
-              fit="cover"
-            />
-          </CardLink>
-        </li>
-      ))}
-    </ul>
+    <CardGrid
+      items={meals.map((m) => ({
+        id: m.id,
+        href: `/recipes/${m.id}`,
+        title: m.name,
+        src: mealImageUrl(m.thumb, "medium"),
+        description: m.area,
+        fit: "cover",
+      }))}
+    />
   );
 }

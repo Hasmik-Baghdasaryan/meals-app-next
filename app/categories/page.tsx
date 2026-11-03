@@ -1,7 +1,5 @@
-import { getCategories } from "@/app/_lib/categories";
-import Card from "@/app/_components/shared/Card";
-import CardLink from "@/app/_components/shared/CardLink";
-import { GRID_CLASSES } from "@/app/styles";
+import { categorySlug, getCategories } from "@/app/_lib/categories";
+import CardGrid from "../_components/shared/CardGrid";
 
 export const metadata = {
   title: "Categories",
@@ -20,18 +18,14 @@ export default async function CategoriesPage() {
           Pick a category to explore recipes.
         </p>
       </div>
-
-      <ul className={GRID_CLASSES}>
-        {categories.map((category) => (
-          <li key={category.id}>
-            <CardLink
-              path={`/categories/${encodeURIComponent(category.name.toLowerCase())}`}
-            >
-              <Card title={category.name} src={category.thumb} />
-            </CardLink>
-          </li>
-        ))}
-      </ul>
+      <CardGrid
+        items={categories.map((c) => ({
+          id: c.id,
+          href: `/categories/${encodeURIComponent(categorySlug(c.name))}`,
+          title: c.name,
+          src: c.thumb,
+        }))}
+      />
     </section>
   );
 }
