@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-
-import { paginate } from "@/app/_helpers/pagination";
 import { getMealByCategory } from "@/app/_lib/meals";
 import { safeDecode } from "@/app/_lib/params";
 import {
@@ -10,10 +8,8 @@ import {
   getCategories,
   getCategoryBySlug,
 } from "@/app/_lib/categories";
-
-import MealGrid from "@/app/_components/shared/MealGrid";
-import Pagination from "@/app/_components/shared/Pagination";
 import { GridSkeleton } from "@/app/_components/shared/Loading";
+import PaginatedMeals from "@/app/_components/shared/PaginatedMeals";
 
 type CategoryPageProps = {
   params: Promise<{ name: string }>;
@@ -57,24 +53,21 @@ async function CategoryContent({ params, searchParams }: CategoryPageProps) {
   const category = await resolveCategory(params);
   if (!category) notFound();
 
-  const { page = "1" } = await searchParams;
-
   const meals = await getMealByCategory(category.name);
   if (!meals.length) notFound();
-
-  const { items, totalPages, currentPage } = paginate(meals, page);
 
   return (
     <section className="w-full py-6">
       <h1 className="mb-6 text-3xl font-bold text-neutral-900">
         {category.name}
       </h1>
-      <MealGrid meals={items} />
-      <Pagination
-        totalPages={totalPages}
-        currentPage={currentPage}
-        basePath={`/categories/${encodeURIComponent(categorySlug(category.name))}`}
-      />
+      <Suspense fallback={<GridSkeleton />}>
+        <PaginatedMeals
+          meals={meals}
+          searchParams={searchParams}
+          basePath={`/categories/${encodeURIComponent(categorySlug(category.name))}`}
+        />
+      </Suspense>
     </section>
   );
 }

@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-
 import { getIngredientBySlug } from "@/app/_lib/ingredients";
 import { getMealByIngredient } from "@/app/_lib/meals";
-import { paginate } from "@/app/_helpers/pagination";
 import { safeDecode } from "@/app/_lib/params";
-
-import MealGrid from "@/app/_components/shared/MealGrid";
-import Message from "@/app/_components/shared/Message";
-import Pagination from "@/app/_components/shared/Pagination";
 import { GridSkeleton } from "@/app/_components/shared/Loading";
+import Message from "@/app/_components/shared/Message";
+import PaginatedMeals from "@/app/_components/shared/PaginatedMeals";
 
 type IngredientPageProps = {
   searchParams: Promise<{ page?: string }>;
@@ -51,10 +47,7 @@ async function PageContent({ searchParams, params }: IngredientPageProps) {
   const ingredient = await resolveIngredient(params);
   if (!ingredient) notFound();
 
-  const { page = "1" } = await searchParams;
   const meals = await getMealByIngredient(ingredient.name);
-
-  const { items, totalPages, currentPage } = paginate(meals, page);
 
   return (
     <>
@@ -64,14 +57,13 @@ async function PageContent({ searchParams, params }: IngredientPageProps) {
       {meals.length === 0 ? (
         <Message text={`No recipes use ${ingredient.name} yet.`} />
       ) : (
-        <>
-          <MealGrid meals={items} />
-          <Pagination
-            totalPages={totalPages}
-            currentPage={currentPage}
+        <Suspense fallback={<GridSkeleton />}>
+          <PaginatedMeals
+            meals={meals}
+            searchParams={searchParams}
             basePath={`/ingredients/${encodeURIComponent(ingredient.name)}`}
           />
-        </>
+        </Suspense>
       )}
     </>
   );

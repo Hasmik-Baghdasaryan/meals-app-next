@@ -1,13 +1,9 @@
 import { Suspense } from "react";
 import { getMealByName } from "@/app/_lib/meals";
-import { MealBasics } from "@/app/_types/meals";
-import { paginate } from "@/app/_helpers/pagination";
 import Search from "@/app/_components/shared/Search";
 import Message from "@/app/_components/shared/Message";
-import MealGrid from "@/app/_components/shared/MealGrid";
-import Pagination from "@/app/_components/shared/Pagination";
-import { ERROR_MESSAGE } from "@/app/_constants";
 import { GridSkeleton } from "@/app/_components/shared/Loading";
+import PaginatedMeals from "../_components/shared/PaginatedMeals";
 
 type SearchPageProps = {
   searchParams: Promise<{ query?: string; page?: string }>;
@@ -24,8 +20,8 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
 }
 
 async function SearchDetails({ searchParams }: SearchPageProps) {
-  const { query = "", page = "1" } = await searchParams;
-  const term = typeof query === "string" ? query.trim() : "";
+  const { query = "" } = await searchParams;
+  const term = typeof query === "string" ? query.trim().slice(0, 100) : "";
 
   if (!term) {
     return (
@@ -36,14 +32,7 @@ async function SearchDetails({ searchParams }: SearchPageProps) {
     );
   }
 
-  let meals: MealBasics[];
-  try {
-    meals = await getMealByName(term.toLocaleLowerCase());
-  } catch {
-    return <Message text={ERROR_MESSAGE} type="error" />;
-  }
-
-  const { items: pageMeals, totalPages, currentPage } = paginate(meals, page);
+  const meals = await getMealByName(term.toLowerCase());
 
   if (!meals.length) {
     return (
@@ -60,10 +49,9 @@ async function SearchDetails({ searchParams }: SearchPageProps) {
       <h1 className="my-6 text-3xl font-bold text-neutral-900">
         Results for “{term}”
       </h1>
-      <MealGrid meals={pageMeals} />
-      <Pagination
-        totalPages={totalPages}
-        currentPage={currentPage}
+      <PaginatedMeals
+        meals={meals}
+        searchParams={searchParams}
         basePath="/search"
         query={{ query: term }}
       />
