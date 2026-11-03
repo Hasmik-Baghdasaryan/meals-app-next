@@ -21,5 +21,3 @@ export function buttonClasses(variant: Variant = "primary", className = "") {
 
 export const GRID_CLASSES =
   "grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
-export const CARD_LINK_CLASSES =
-  "group flex h-full flex-col overflow-hidden rounded-2xl border …"; // your existing string

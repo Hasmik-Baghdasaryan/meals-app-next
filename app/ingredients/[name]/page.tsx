@@ -2,16 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import { ERROR_MESSAGE } from "@/app/_constants";
-import { getMealByIngredient } from "@/app/_lib/meals";
+import { getIngredients, getMealByIngredient } from "@/app/_lib/meals";
 import { paginate } from "@/app/_helpers/pagination";
 import { safeDecode } from "@/app/_lib/params";
-import type { MealBasics } from "@/app/_types/meals";
+import { GridSkeleton } from "@/app/_components/shared/Loading";
 
 import MealGrid from "@/app/_components/shared/MealGrid";
-import Message from "@/app/_components/shared/Message";
 import Pagination from "@/app/_components/shared/Pagination";
-import { SearchSkeleton } from "@/app/_components/shared/Loading";
 
 type IngredientPageProps = {
   searchParams: Promise<{ page?: string }>;
@@ -33,7 +30,7 @@ export default function IngredientPage({
 }: IngredientPageProps) {
   return (
     <section>
-      <Suspense fallback={<SearchSkeleton />}>
+      <Suspense fallback={<GridSkeleton />}>
         <PageContent searchParams={searchParams} params={params} />
       </Suspense>
     </section>
@@ -43,31 +40,30 @@ export default function IngredientPage({
 async function PageContent({ searchParams, params }: IngredientPageProps) {
   const { name } = await params;
   const ingredientName = safeDecode(name);
-  if (!ingredientName) notFound();
-
+  const ingredients = await getIngredients();
   const { page = "1" } = await searchParams;
 
-  let meals: MealBasics[];
-  try {
-    meals = await getMealByIngredient(ingredientName);
-  } catch {
-    return <Message type="error" text={ERROR_MESSAGE} />;
-  }
+  const ingredient = ingredients.find(
+    (i) => i.name.toLowerCase() === ingredientName?.toLowerCase(),
+  );
+  if (!ingredient) notFound();
 
-  if (meals.length === 0) notFound();
+  const meals = await getMealByIngredient(ingredient.name);
+
+  if (!meals.length) notFound();
 
   const { items, totalPages, currentPage } = paginate(meals, page);
 
   return (
     <>
-      <h1 className="mb-6 text-3xl font-bold text-neutral-900 capitalize">
-        {ingredientName}
+      <h1 className="mb-6 text-3xl font-bold text-neutral-900">
+        {ingredient.name}
       </h1>
       <MealGrid meals={items} />
       <Pagination
         totalPages={totalPages}
         currentPage={currentPage}
-        basePath={`/ingredients/${encodeURIComponent(ingredientName)}`}
+        basePath={`/ingredients/${encodeURIComponent(ingredient.name.toLowerCase())}`}
       />
     </>
   );

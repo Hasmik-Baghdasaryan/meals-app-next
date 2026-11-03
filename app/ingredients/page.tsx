@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 
 import { getIngredients } from "@/app/_lib/meals";
-import { IngredientItem } from "@/app/_types/meals";
 import { paginate } from "@/app/_helpers/pagination";
 import { SearchSkeleton } from "@/app/_components/shared/Loading";
 
@@ -10,8 +9,8 @@ import Message from "@/app/_components/shared/Message";
 import Search from "@/app/_components/shared/Search";
 import Pagination from "@/app/_components/shared/Pagination";
 import CardLink from "@/app/_components/shared/CardLink";
-import { ERROR_MESSAGE } from "@/app//_constants";
-import { GridSkeleton } from "@/app//_components/shared/Loading";
+import { GridSkeleton } from "@/app/_components/shared/Loading";
+import { GRID_CLASSES } from "../styles";
 
 type IngredientsPageProps = {
   searchParams: Promise<{ page?: string; query?: string }>;
@@ -49,12 +48,7 @@ async function PageContent({ searchParams }: IngredientsPageProps) {
   const { page = "1", query = "" } = await searchParams;
   const term = typeof query === "string" ? query.trim().toLowerCase() : "";
 
-  let ingredients: IngredientItem[];
-  try {
-    ingredients = await getIngredients();
-  } catch {
-    return <Message text={ERROR_MESSAGE} type="error" />;
-  }
+  const ingredients = await getIngredients();
 
   const filtered = term
     ? ingredients.filter((ing) => ing.name.toLowerCase().includes(term))
@@ -73,10 +67,12 @@ async function PageContent({ searchParams }: IngredientsPageProps) {
 
   return (
     <>
-      <ul className="my-6 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <ul className={`${GRID_CLASSES} my-6`}>
         {items.map((ingr) => (
           <li key={ingr.id}>
-            <CardLink path={`/ingredients/${encodeURIComponent(ingr.name)}`}>
+            <CardLink
+              path={`/ingredients/${encodeURIComponent(ingr.name.toLocaleLowerCase())}`}
+            >
               <Card src={ingr.thumb} title={ingr.name} />
             </CardLink>
           </li>

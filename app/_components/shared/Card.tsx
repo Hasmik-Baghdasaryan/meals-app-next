@@ -12,7 +12,6 @@ export default function Card({
   src,
   title,
   description,
-  country,
   fit = "contain",
 }: CardProps) {
   return (
@@ -39,7 +38,6 @@ export default function Card({
         {description ? (
           <p className="mt-auto text-sm text-neutral-600">{description}</p>
         ) : null}
-        {country ? <p className="text-sm text-neutral-600">{country}</p> : null}
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-type InstructionsProps = { instructions?: string[] };
+type InstructionsProps = { instructions: string[] };
 
 export default function Instructions({ instructions }: InstructionsProps) {
   if (!instructions?.length) return null;

@@ -10,7 +10,7 @@ export async function GET() {
   } catch {
     return NextResponse.json(
       { error: "Failed to fetch meal" },
-      { status: 404 },
+      { status: 502 },
     );
   }
 }

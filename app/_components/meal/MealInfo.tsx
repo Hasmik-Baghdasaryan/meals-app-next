@@ -4,12 +4,14 @@ import Actions from "./Actions";
 export type MealInfoProps = {
   meal: Meal;
   showActions?: boolean;
+  headingAs?: "h1" | "h2";
   children?: React.ReactNode;
 };
 
 export default function MealInfo({
   meal,
   showActions = false,
+  headingAs: Heading = "h2",
   children,
 }: MealInfoProps) {
   const eyebrow = [meal.category, meal.area].filter(Boolean).join(" · ");
@@ -21,9 +23,9 @@ export default function MealInfo({
           {eyebrow}
         </p>
       )}
-      <h2 className="text-[clamp(30px,4vw,46px)] leading-[1.1] font-bold text-balance text-neutral-900">
+      <Heading className="text-[clamp(30px,4vw,46px)] leading-[1.1] font-bold text-balance text-neutral-900">
         {meal.name}
-      </h2>
+      </Heading>
 
       {meal.tags.length > 0 && (
         <ul className="flex flex-wrap gap-2">

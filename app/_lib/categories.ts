@@ -11,3 +11,15 @@ export async function getCategories(): Promise<Category[]> {
   );
   return asArray<RawCategory>(data.categories).map(normalizeCategory);
 }
+
+export const categorySlug = (name: string) => name.toLowerCase();
+
+export async function getCategoryBySlug(
+  slug: string | null,
+): Promise<Category | null> {
+  if (!slug) return null;
+  const categories = await getCategories();
+  return (
+    categories.find((c) => categorySlug(c.name) === slug.toLowerCase()) ?? null
+  );
+}

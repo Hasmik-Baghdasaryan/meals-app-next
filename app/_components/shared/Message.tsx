@@ -12,6 +12,7 @@ export default function Message({ text, type = "info" }: MessageProps) {
   return (
     <p
       className={`mx-auto my-4 max-w-[60ch] rounded-xl border border-neutral-200 px-3 py-2 text-center leading-normal ${styles[type]}`}
+      role={type === "error" ? "alert" : "status"}
     >
       {text}
     </p>

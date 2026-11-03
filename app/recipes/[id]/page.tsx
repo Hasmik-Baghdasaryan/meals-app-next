@@ -1,26 +1,36 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { getMealDetails } from "@/app/_lib/meals";
 
+import { getMealDetails } from "@/app/_lib/meals";
 import MealDetails from "@/app/_components/meal/MealDetails";
-import { Meal } from "@/app/_types/meals";
-import Message from "@/app/_components/shared/Message";
-import { ERROR_MESSAGE } from "@/app/_constants";
 import { RecipeSkeleton } from "@/app/_components/shared/Loading";
 
 type RecipeProps = { params: Promise<{ id: string }> };
 
+const ID_PATTERN = /^\d+$/;
+
+async function resolveMeal(params: RecipeProps["params"]) {
+  const { id } = await params;
+  return ID_PATTERN.test(id) ? getMealDetails(id) : null;
+}
+
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const meal = await getMealDetails(id);
+}: RecipeProps): Promise<Metadata> {
+  const meal = await resolveMeal(params).catch(() => null);
+  if (!meal) return { title: "Recipe not found" };
 
+  const description = `${[meal.category, meal.area].filter(Boolean).join(" · ")} recipe with ${meal.ingredients.length} ingredients.`;
   return {
-    title: meal ? `${meal.name}` : "",
+    title: meal.name,
+    description,
+    openGraph: {
+      title: meal.name,
+      description,
+      images: meal.thumb ? [meal.thumb] : [],
+    },
   };
 }
 
@@ -33,15 +43,7 @@ export default function Recipe({ params }: RecipeProps) {
 }
 
 async function RecipeContent({ params }: RecipeProps) {
-  const { id } = await params;
-  let meal: Meal | null = null;
-
-  try {
-    meal = await getMealDetails(id);
-  } catch {
-    return <Message text={ERROR_MESSAGE} />;
-  }
-
+  const meal = await resolveMeal(params);
   if (!meal) notFound();
 
   return (
@@ -50,7 +52,7 @@ async function RecipeContent({ params }: RecipeProps) {
         href="/"
         className="mb-6 inline-flex text-sm font-bold text-primary-500 hover:text-primary-700"
       >
-        ← Back to recipes
+        ← Back to home
       </Link>
       <MealDetails meal={meal} />
     </article>

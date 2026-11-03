@@ -1,22 +1,29 @@
 "use client";
 
-type ErrorProps = {
-  error: { message: string };
+import { buttonClasses } from "@/app/styles";
+
+export default function ErrorPage({
+  reset,
+}: {
+  error: Error & { digest?: string };
   reset: () => void;
-};
-
-export default function Error({ error, reset }: ErrorProps) {
+}) {
   return (
-    <main className="flex justify-center items-center flex-col gap-6">
-      <h1 className="text-3xl font-semibold">Something went wrong!</h1>
-      <p className="text-lg">{error.message}</p>
-
+    <div
+      role="alert"
+      className="flex flex-col items-center gap-6 py-16 text-center"
+    >
+      <h1 className="text-3xl font-semibold">Something went wrong</h1>
+      <p className="text-neutral-600">
+        We couldn&apos;t load this page. Please try again.
+      </p>
       <button
-        className="inline-block bg-accent-300 text-primary-700 px-6 py-3 text-lg"
+        type="button"
         onClick={reset}
+        className={buttonClasses("primary")}
       >
         Try again
       </button>
-    </main>
+    </div>
   );
 }

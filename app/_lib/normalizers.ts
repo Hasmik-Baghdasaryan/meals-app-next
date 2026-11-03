@@ -21,7 +21,7 @@ function cleanText(text: string) {
 }
 
 function parseMealInstructions(text: string) {
-  return (text ?? "")
+  return text
     .split(/\r?\n/)
     .map(cleanText)
     .filter((line) => line && !STEP_ONLY.test(line));
@@ -56,7 +56,10 @@ export function normalizeMealDetails(meal: RawMeal): Meal {
     ingredients: parseMealIngredients(meal),
     instructions: parseMealInstructions(meal.strInstructions || ""),
     tags: meal.strTags
-      ? meal.strTags.split(",").map((tag: string) => tag.trim())
+      ? meal.strTags
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean)
       : [],
     source: meal.strSource || null,
     youtube: meal.strYoutube || null,
