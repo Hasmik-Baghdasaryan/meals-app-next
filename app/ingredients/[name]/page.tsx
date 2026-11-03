@@ -2,26 +2,36 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import { getIngredients, getMealByIngredient } from "@/app/_lib/meals";
+import { getIngredientBySlug } from "@/app/_lib/ingredients";
+import { getMealByIngredient } from "@/app/_lib/meals";
 import { paginate } from "@/app/_helpers/pagination";
 import { safeDecode } from "@/app/_lib/params";
-import { GridSkeleton } from "@/app/_components/shared/Loading";
 
 import MealGrid from "@/app/_components/shared/MealGrid";
+import Message from "@/app/_components/shared/Message";
 import Pagination from "@/app/_components/shared/Pagination";
+import { GridSkeleton } from "@/app/_components/shared/Loading";
 
 type IngredientPageProps = {
   searchParams: Promise<{ page?: string }>;
   params: Promise<{ name: string }>;
 };
 
+async function resolveIngredient(params: IngredientPageProps["params"]) {
+  const { name } = await params;
+  return getIngredientBySlug(safeDecode(name));
+}
+
 export async function generateMetadata({
   params,
 }: Pick<IngredientPageProps, "params">): Promise<Metadata> {
-  const name = safeDecode((await params).name);
-  if (!name) return { title: "Not found" };
+  const ingredient = await resolveIngredient(params).catch(() => null);
+  if (!ingredient) return { title: "Ingredient not found" };
 
-  return { title: name.charAt(0).toUpperCase() + name.slice(1) };
+  return {
+    title: ingredient.name,
+    description: ingredient.description.slice(0, 155) || undefined,
+  };
 }
 
 export default function IngredientPage({
@@ -38,19 +48,11 @@ export default function IngredientPage({
 }
 
 async function PageContent({ searchParams, params }: IngredientPageProps) {
-  const { name } = await params;
-  const ingredientName = safeDecode(name);
-  const ingredients = await getIngredients();
-  const { page = "1" } = await searchParams;
-
-  const ingredient = ingredients.find(
-    (i) => i.name.toLowerCase() === ingredientName?.toLowerCase(),
-  );
+  const ingredient = await resolveIngredient(params);
   if (!ingredient) notFound();
 
+  const { page = "1" } = await searchParams;
   const meals = await getMealByIngredient(ingredient.name);
-
-  if (!meals.length) notFound();
 
   const { items, totalPages, currentPage } = paginate(meals, page);
 
@@ -59,12 +61,18 @@ async function PageContent({ searchParams, params }: IngredientPageProps) {
       <h1 className="mb-6 text-3xl font-bold text-neutral-900">
         {ingredient.name}
       </h1>
-      <MealGrid meals={items} />
-      <Pagination
-        totalPages={totalPages}
-        currentPage={currentPage}
-        basePath={`/ingredients/${encodeURIComponent(ingredient.name.toLowerCase())}`}
-      />
+      {meals.length === 0 ? (
+        <Message text={`No recipes use ${ingredient.name} yet.`} />
+      ) : (
+        <>
+          <MealGrid meals={items} />
+          <Pagination
+            totalPages={totalPages}
+            currentPage={currentPage}
+            basePath={`/ingredients/${encodeURIComponent(ingredient.name)}`}
+          />
+        </>
+      )}
     </>
   );
 }

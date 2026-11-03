@@ -1,27 +1,17 @@
 import { cacheLife } from "next/cache";
 import { asArray, mealdb } from "./client";
-import {
-  normalizeIngredient,
-  normalizeMealBasics,
-  normalizeMealDetails,
-} from "./normalizers";
-import type {
-  MealBasics,
-  Meal,
-  IngredientItem,
-  RawIngredient,
-  RawMeal,
-} from "@/app/_types/meals";
+import { normalizeMealBasics, normalizeMealDetails } from "./normalizers";
+import type { MealBasics, Meal, RawMeal } from "@/app/_types/meals";
 
 type MealsResponse = { meals: RawMeal[] | null };
 
-export async function getIngredients(): Promise<IngredientItem[]> {
+export async function getMealByCategory(
+  category: string,
+): Promise<MealBasics[]> {
   "use cache";
   cacheLife("days");
-  const data = await mealdb<{ meals: RawIngredient[] | null }>("list.php", {
-    i: "list",
-  });
-  return asArray<RawIngredient>(data.meals).map(normalizeIngredient);
+  const data = await mealdb<MealsResponse>("filter.php", { c: category });
+  return asArray<RawMeal>(data.meals).map(normalizeMealBasics);
 }
 
 export async function getMealByIngredient(
@@ -32,15 +22,6 @@ export async function getMealByIngredient(
   const data = await mealdb<MealsResponse>("filter.php", {
     i: ingredient.trim().replace(/\s+/g, "_"),
   });
-  return asArray<RawMeal>(data.meals).map(normalizeMealBasics);
-}
-
-export async function getMealByCategory(
-  category: string,
-): Promise<MealBasics[]> {
-  "use cache";
-  cacheLife("days");
-  const data = await mealdb<MealsResponse>("filter.php", { c: category });
   return asArray<RawMeal>(data.meals).map(normalizeMealBasics);
 }
 

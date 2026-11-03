@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { getIngredients } from "@/app/_lib/meals";
+import { getIngredients } from "@/app/_lib/ingredients";
 import { paginate } from "@/app/_helpers/pagination";
 import { SearchSkeleton } from "@/app/_components/shared/Loading";
 
