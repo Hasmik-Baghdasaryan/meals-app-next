@@ -60,7 +60,7 @@ async function PageContent({ searchParams }: IngredientsPageProps) {
     );
   }
 
-  const { items, totalPages, currentPage } = paginate(filtered, page, 24);
+  const { items, totalPages, currentPage } = paginate(filtered, page, 25);
 
   return (
     <>
