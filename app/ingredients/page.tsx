@@ -6,8 +6,8 @@ import { GridSkeleton, SearchSkeleton } from "@/app/_components/shared/Loading";
 
 import Message from "@/app/_components/shared/Message";
 import Pagination from "@/app/_components/shared/Pagination";
-import CardGrid from "../_components/shared/CardGrid";
-import LiveFilter from "../_components/search/LiveFilter";
+import CardGrid from "@/app/_components/shared/CardGrid";
+import LiveFilter from "@/app/_components/search/LiveFilter";
 
 type IngredientsPageProps = {
   searchParams: Promise<{ page?: string; query?: string }>;

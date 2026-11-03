@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import { getMealByName } from "@/app/_lib/meals";
-import Message from "@/app/_components/shared/Message";
 import { GridSkeleton, SearchSkeleton } from "@/app/_components/shared/Loading";
-import PaginatedMeals from "../_components/shared/PaginatedMeals";
-import SearchForm from "../_components/search/SearchForm";
+import Message from "@/app/_components/shared/Message";
+import PaginatedMeals from "@/app/_components/shared/PaginatedMeals";
+import SearchForm from "@/app/_components/search/SearchForm";
 
 type SearchPageProps = {
   searchParams: Promise<{ query?: string; page?: string }>;

@@ -1,7 +1,7 @@
 import { cacheLife } from "next/cache";
+import type { MealBasics, Meal, RawMeal } from "@/app/_types/meals";
 import { asArray, mealdb } from "./client";
 import { normalizeMealBasics, normalizeMealDetails } from "./normalizers";
-import type { MealBasics, Meal, RawMeal } from "@/app/_types/meals";
 
 type MealsResponse = { meals: RawMeal[] | null };
 

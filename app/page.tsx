@@ -4,7 +4,7 @@ import {
   SearchSkeleton,
 } from "@/app/_components/shared/Loading";
 import RandomMeal from "@/app/_components/randomMeal/RandomMeal";
-import SearchForm from "./_components/search/SearchForm";
+import SearchForm from "@/app/_components/search/SearchForm";
 
 export default function Home() {
   return (

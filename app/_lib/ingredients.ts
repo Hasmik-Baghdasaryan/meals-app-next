@@ -1,5 +1,5 @@
 import { cacheLife } from "next/cache";
-import { IngredientItem, RawIngredient } from "../_types/meals";
+import { IngredientItem, RawIngredient } from "@/app/_types/meals";
 import { asArray, mealdb } from "./client";
 import { normalizeIngredient } from "./normalizers";
 

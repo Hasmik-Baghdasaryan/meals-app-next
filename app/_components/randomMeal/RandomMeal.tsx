@@ -1,8 +1,8 @@
 import { getRandomMeal } from "@/app/_lib/meals";
 import { Meal } from "@/app/_types/meals";
 import { ERROR_MESSAGE, NOTFOUND_MESSAGE } from "@/app/_constants";
-import RandomMealView from "./RandomMealView";
 import Message from "@/app/_components/shared/Message";
+import RandomMealView from "./RandomMealView";
 
 export default async function RandomMeal() {
   let meal: Meal | null = null;

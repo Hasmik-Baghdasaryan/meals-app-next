@@ -1,5 +1,5 @@
 import { categorySlug, getCategories } from "@/app/_lib/categories";
-import CardGrid from "../_components/shared/CardGrid";
+import CardGrid from "@/app/_components/shared/CardGrid";
 
 export const metadata = {
   title: "Categories",
