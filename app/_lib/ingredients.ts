@@ -16,6 +16,6 @@ export async function getIngredientBySlug(
   slug: string | null,
 ): Promise<IngredientItem | null> {
   if (!slug) return null;
-  const all = await getIngredients(); // cached, no extra API call
+  const all = await getIngredients();
   return all.find((i) => i.name.toLowerCase() === slug.toLowerCase()) ?? null;
 }
